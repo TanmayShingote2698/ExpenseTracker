@@ -1,0 +1,135 @@
+{% extends 'expenses/base.html' %}
+{% block title %}Dashboard{% endblock %}
+<div>
+        <!-- 🚪 Logout Button (Top Right Corner, Slightly Up) -->
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm" style="top: -10px; right: 20px;">
+            🚪 Logout
+        </a>
+        
+</div>
+{% block content %}
+<div class="container mt-4">
+    <!-- 🔹 Navbar with Dashboard Title & Logout Button on the Right Corner -->
+    <div class="d-flex justify-content-between align-items-center mb-4 position-relative">
+        <h2 class="fw-bold">📊 Expense Dashboard</h2>
+
+        <!-- 🚪 Logout Button (Top Right Corner, Slightly Up) -->
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm ms-auto" style="position: relative; left: 100px;top: -75px;">
+            🚪 Logout
+        </a>
+    </div>
+
+    <!-- 🔹 Total Expenses Summary -->
+    <div class="alert alert-info text-center fw-bold fs-5">
+        💰 Total Expenses: <span style="color: #ff5722;">₹{{ total_expense|floatformat:2 }}</span>
+    </div>
+
+    <!-- 🔹 Add Expense Button (Centered) -->
+    <div class="d-flex justify-content-center mt-3">
+        <a href="{% url 'add_expense' %}" class="btn btn-success btn-lg">
+            ➕ Add Expense
+        </a>
+    </div>
+
+    <!-- 🔥 Expense Chart & Table Section -->
+    <div class="row mt-4">
+        <!-- 📊 Pie Chart Section -->
+        <div class="col-md-6 d-flex justify-content-center">
+            <div class="card shadow p-4 text-center" style="width: 100%; max-width: 450px; height: 450px;">
+                <h5 class="mb-3">Expense Distribution</h5>
+                <div style="width: 100%; height: 350px;">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📄 Expense Table Section -->
+        <div class="col-md-6">
+            <div class="card shadow p-3">
+                <h5 class="text-center">Recent Expenses</h5>
+                {% if expenses %}
+                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                    <table class="table table-bordered table-hover mt-3 text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Amount (₹)</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in expenses %}
+                            <tr>
+                                <td>{{ expense.title }}</td>
+                                <td class="text-danger fw-bold">₹{{ expense.amount|floatformat:2 }}</td>
+                                <td>{{ expense.category }}</td>
+                                <td>{{ expense.date }}</td>
+                                <td>
+                                    <a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">✏ Edit</a>
+                                    <a href="{% url 'delete_expense' expense.id %}" class="btn btn-danger btn-sm">🗑 Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No expenses found. Add your first expense <a href="{% url 'add_expense' %}">here</a>.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 📄 Download PDF Button -->
+    <div class="text-center mt-4">
+        <a href="{% url 'download_pdf' %}" class="btn btn-primary btn-lg">
+            📄 Download Expense Report
+        </a>
+    </div>
+</div>
+
+<!-- 🛠 Chart.js Library & Data Labels Plugin -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var categories = JSON.parse('{{ categories|escapejs }}');
+        var amounts = JSON.parse('{{ amounts|escapejs }}');
+
+        if (categories.length === 0 || amounts.length === 0) {
+            console.log("No expenses to show in Pie Chart.");
+        } else {
+            var ctx = document.getElementById('expenseChart').getContext('2d');
+            Chart.register(ChartDataLabels);
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        datalabels: {
+                            color: '#fff',
+                            font: { weight: 'bold', size: 12 },
+                            align: 'center',
+                            anchor: 'center',
+                            formatter: (value) => "₹" + value.toLocaleString('en-IN', { minimumFractionDigits: 2 })
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'expenses/base.html' %}
+{% block title %}Add Expense{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">➕ Add New Expense</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <form method="POST" action="{% url 'add_expense' %}">
+                    {% csrf_token %}
+
+                    <!-- 📌 Expense Title -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-bold">Expense Title</label>
+                        <input type="text" id="title" name="title" class="form-control"
+                            placeholder="Enter expense title" required>
+                    </div>
+
+                    <!-- 💰 Amount -->
+                    <div class="mb-3">
+                        <label for="amount" class="form-label fw-bold">Amount (₹)</label>
+                        <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount"
+                            required>
+                    </div>
+
+                    <!-- 🏷️ Category Dropdown -->
+                    <div class="mb-3">
+                        <label for="category" class="form-label fw-bold">Category</label>
+                        <select id="category" name="category" class="form-select" required>
+                            <option value="" selected disabled>-- Select Category --</option>
+                            <option value="Food">🍔 Food</option>
+                            <option value="Transport">🚗 Transport</option>
+                            <option value="Shopping">🛍 Shopping</option>
+                            <option value="Bills">💡 Bills</option>
+                            <option value="Entertainment">🎬 Entertainment</option>
+                            <option value="Other">📌 Other</option>
+                        </select>
+                    </div>
+
+                    <!-- 📅 Date Picker -->
+                    <div class="mb-3">
+                        <label for="date" class="form-label fw-bold">Date</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+
+                    <!-- 📤 Submit Button -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">✅ Add Expense</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 🔙 Back Button -->
+            <div class="text-center mt-3">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🛠 Form Validation Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date().toISOString().split("T")[0];
+        document.getElementById("date").setAttribute("max", today);
+    });
+</script>
+
+{% endblock %}
