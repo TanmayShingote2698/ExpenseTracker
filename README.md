@@ -32,16 +32,17 @@ This Expense Tracker application allows users to track income and expenses, cate
 
 ### 📸 Screenshots
 
-![Dashboard](dashboard.jpg)
-*Expense overview with total income/expense and chart*
+#### 🧾 Login Page
+![Login](login.png)
 
-![Add Expense](add_expense.jpg)
-*Form to add a new transaction*
+#### 📊 Dashboard
+![Dashboard](dashboard.png)
 
-![Categories View](categories.jpg)
-*Filter expenses by category*
+#### 💼 Expense Entry
+![Add Expense](expense.png)
 
-> 💡 Put your screenshots in your repo folder (or `/assets`) and use correct paths.
+#### 📄 Downloadable Report (PDF)
+![PDF Report](pdf_report.png)
 
 ---
 
